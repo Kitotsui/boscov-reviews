@@ -26,7 +26,7 @@ const Header = ({ onSearch, searchQuery = '', isLoggedIn = false }: HeaderProps)
         <div className="flex items-center">
           <Link to="/" className="flex items-center space-x-2 mr-6">
             <FilmIcon className="h-6 w-6" />
-            <span className="font-bold text-lg hidden sm:inline">JoyRide Reviews</span>
+            <span className="font-bold text-lg hidden sm:inline">BoscovFilmes</span>
           </Link>
           
           <nav className="hidden md:flex items-center space-x-4">
