@@ -13,8 +13,8 @@ const GenreFilter = ({ genres, selectedGenres, onGenreToggle }: GenreFilterProps
   return (
     <div className="mb-6">
       <h3 className="font-medium mb-2">Filtrar por Gênero</h3>
-      <ScrollArea className="whitespace-nowrap pb-2" orientation="horizontal">
-        <div className="flex gap-2">
+      <ScrollArea className="whitespace-nowrap pb-2 max-w-full">
+        <div className="flex gap-2 pb-2">
           {genres.map((genre) => {
             const isSelected = selectedGenres.includes(genre);
             return (
