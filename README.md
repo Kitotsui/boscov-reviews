@@ -1,73 +1,48 @@
-# Welcome to your Lovable project
+Bem-vindo ao projeto BoscovFilmes
 
-## Project info
+Este repositório contém o código-fonte de um aplicativo web desenvolvido com Vite, TypeScript, React, shadcn-ui e Tailwind CSS.
 
-**URL**: https://lovable.dev/projects/77c7086f-4df8-4208-ac9f-a6045076cb18
+Como editar este código?
 
-## How can I edit this code?
+Usando sua IDE preferida
 
-There are several ways of editing your application.
+Clone o repositório
+git clone <URL_DO_SEU_REPOSITÓRIO>
+cd <NOME_DO_PROJETO>
 
-**Use Lovable**
+Instale as dependências
+npm install
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/77c7086f-4df8-4208-ac9f-a6045076cb18) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+Inicie o servidor de desenvolvimento
 npm run dev
-```
+Isso iniciará o projeto em modo de desenvolvimento com recarregamento automático.
 
-**Edit a file directly in GitHub**
+Editando diretamente no GitHub
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Navegue até o arquivo desejado na interface do GitHub
 
-**Use GitHub Codespaces**
+Clique no ícone de lápis para editar
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+Faça suas alterações e valide o commit
 
-## What technologies are used for this project?
+Usando GitHub Codespaces
 
-This project is built with:
+Acesse a página principal do repositório no GitHub
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+Clique em Code e depois em Codespaces
 
-## How can I deploy this project?
+Selecione New codespace para abrir um ambiente de desenvolvimento no navegador
 
-Simply open [Lovable](https://lovable.dev/projects/77c7086f-4df8-4208-ac9f-a6045076cb18) and click on Share -> Publish.
+Tecnologias utilizadas
+Vite
+TypeScript
+React
+shadcn-ui
+Tailwind CSS
 
-## Can I connect a custom domain to my Lovable project?
+Como implantar este projeto
 
-Yes, you can!
+Crie a versão de produção
+npm run build
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+Faça o deploy enviando a pasta dist (ou o diretório configurado) para o serviço de sua preferência (Netlify, Vercel, GitHub Pages, AWS S3 etc.)

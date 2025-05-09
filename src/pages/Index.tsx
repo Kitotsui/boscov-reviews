@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Header from '@/components/Header';
 import MovieGrid, { Movie } from '@/components/MovieGrid';
@@ -6,7 +5,7 @@ import GenreFilter from '@/components/GenreFilter';
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from '@/components/ui/separator';
 
-// Mock data for now - this would be fetched from our API
+
 const mockGenres = ["Ação", "Aventura", "Animação", "Comédia", "Crime", "Documentário", "Drama", "Família", "Fantasia", "História", "Terror", "Música", "Mistério", "Romance", "Ficção Científica", "Thriller", "Guerra", "Faroeste"];
 
 const mockMovies: Movie[] = [
@@ -43,7 +42,7 @@ const mockMovies: Movie[] = [
   {
     id: "4",
     title: "A Lista de Schindler",
-    poster: "https://m.media-amazon.com/images/M/MV5BNDE4OTMxMTctNmRhYy00NWE2LTg3YzItYTk3M2UwOTU5Njg4XkEyXkFqcGdeQXVyNTUyMzE4Mzg@._V1_.jpg",
+    poster: "https://br.web.img2.acsta.net/pictures/19/04/10/19/44/2904073.jpg",
     year: 1993,
     director: "Steven Spielberg",
     rating: 9.0,

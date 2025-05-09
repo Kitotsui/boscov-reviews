@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -11,24 +10,20 @@ import { Card, CardContent } from '@/components/ui/card';
 import { ArrowLeft, Clock, Calendar, User } from 'lucide-react';
 
 // Mock data - would be fetched from API in real app
-const mockMovie = {
-  id: "1",
-  title: "Pulp Fiction",
-  poster: "https://m.media-amazon.com/images/M/MV5BNGNhMDIzZTUtNTBlZi00MTRlLWFjM2ItYzViMjE3YzI5MjljXkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_.jpg",
-  year: 1994,
-  director: "Quentin Tarantino",
-  genres: ["Crime", "Drama"],
-  duration: "2h 34m",
-  rating: 8.9,
-  description: "As histórias de dois assassinos, um boxeador, um gângster e sua esposa, e um par de bandidos se entrelaçam neste conto de violência e redenção.",
-  producer: "Miramax",
-  classification: "18+",
-  reviews: [
+const mockMovies = [
+  { id: "1", title: "Pulp Fiction", poster: "https://m.media-amazon.com/images/M/MV5BNGNhMDIzZTUtNTBlZi00MTRlLWFjM2ItYzViMjE3YzI5MjljXkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_.jpg", year: 1994, director: "Quentin Tarantino", genres: ["Crime", "Drama"], duration: "2h 34m", rating: 8.9, description: "As histórias de dois assassinos, um boxeador, um gângster e sua esposa, e um par de bandidos se entrelaçam neste conto de violência e redenção.", producer: "Miramax", classification: "18+", reviews: [
     { id: "r1", userId: "u1", userName: "Carlos Silva", rating: 5, comment: "Clássico absoluto do cinema. Diálogos brilhantes e atuações memoráveis.", date: "2023-10-15" },
     { id: "r2", userId: "u2", userName: "Ana Sousa", rating: 4, comment: "Roteiro não-linear genial. Tarantino no seu melhor.", date: "2023-09-22" },
     { id: "r3", userId: "u3", userName: "Ricardo Oliveira", rating: 5, comment: "Um dos melhores filmes já feitos. Cada cena é icônica.", date: "2023-11-03" }
-  ]
-};
+  ] },
+  { id: "2", title: "O Poderoso Chefão", poster: "https://m.media-amazon.com/images/M/MV5BM2MyNjYxNmUtYTAwNi00MTYxLWJmNWYtYzZlODY3ZTk3OTFlXkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_.jpg", year: 1972, director: "Francis Ford Coppola", genres: ["Crime", "Drama"], duration: "2h 55m", rating: 9.2, description: "Um clássico do cinema que narra a história da família Corleone.", producer: "Paramount", classification: "18+", reviews: [] },
+  { id: "3", title: "O Cavaleiro das Trevas", poster: "https://m.media-amazon.com/images/M/MV5BMTMxNTMwODM0NF5BMl5BanBnXkFtZTcwODAyMTk2Mw@@._V1_.jpg", year: 2008, director: "Christopher Nolan", genres: ["Ação", "Crime", "Drama"], duration: "2h 32m", rating: 9.0, description: "Batman enfrenta o caos em Gotham City.", producer: "Warner Bros", classification: "14+", reviews: [] },
+  { id: "4", title: "A Lista de Schindler", poster: "https://br.web.img2.acsta.net/pictures/19/04/10/19/44/2904073.jpg", year: 1993, director: "Steven Spielberg", genres: ["Drama", "História"], duration: "3h 15m", rating: 9.0, description: "A história de Oskar Schindler, que salvou milhares de judeus durante o Holocausto.", producer: "Universal", classification: "16+", reviews: [] },
+  { id: "5", title: "O Senhor dos Anéis: O Retorno do Rei", poster: "https://m.media-amazon.com/images/M/MV5BNzA5ZDNlZWMtM2NhNS00NDJjLTk4NDItYTRmY2EwMWZlMTY3XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_.jpg", year: 2003, director: "Peter Jackson", genres: ["Aventura", "Drama", "Fantasia"], duration: "3h 21m", rating: 9.0, description: "A conclusão da saga do Senhor dos Anéis.", producer: "New Line Cinema", classification: "12+", reviews: [] },
+  { id: "6", title: "Forrest Gump", poster: "https://m.media-amazon.com/images/M/MV5BNWIwODRlZTUtY2U3ZS00Yzg1LWJhNzYtMmZiYmEyNmU1NjMzXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_.jpg", year: 1994, director: "Robert Zemeckis", genres: ["Drama", "Romance"], duration: "2h 22m", rating: 8.8, description: "A vida de Forrest Gump, um homem com um QI abaixo da média.", producer: "Paramount", classification: "14+", reviews: [] },
+  { id: "7", title: "Interestelar", poster: "https://m.media-amazon.com/images/M/MV5BZjdkOTU3MDktN2IxOS00OGEyLWFmMjktY2FiMmZkNWIyODZiXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg", year: 2014, director: "Christopher Nolan", genres: ["Aventura", "Drama", "Ficção Científica"], duration: "2h 49m", rating: 8.6, description: "Um grupo de astronautas viaja pelo espaço para encontrar um novo lar para a humanidade.", producer: "Warner Bros", classification: "12+", reviews: [] },
+  { id: "8", title: "Cidade de Deus", poster: "https://m.media-amazon.com/images/M/MV5BMGU5OWEwZDItNmNkMC00NzZmLTk1YTctNzVhZTJjM2NlZTVmXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg", year: 2002, director: "Fernando Meirelles", genres: ["Crime", "Drama"], duration: "2h 10m", rating: 8.6, description: "A história de dois jovens que crescem em um bairro violento do Rio de Janeiro.", producer: "Miramax", classification: "18+", reviews: [] },
+];
 
 const MovieDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -37,9 +32,8 @@ const MovieDetails = () => {
   const [reviewComment, setReviewComment] = React.useState('');
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
 
-  // In a real app, we'd fetch the movie based on the id
-  // For now, we'll use the mock data
-  const movie = mockMovie;
+  // Buscar o filme com base no ID
+  const movie = mockMovies.find(m => m.id === id);
 
   const handleSubmitReview = (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,7 +46,7 @@ const MovieDetails = () => {
   };
 
   if (!movie) {
-    return <div>Film not found</div>;
+    return <div>Filme não encontrado</div>;
   }
 
   return (

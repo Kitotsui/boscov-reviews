@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -71,7 +70,7 @@ const Login = () => {
     <div className="min-h-screen flex flex-col items-center justify-center bg-muted/40 p-4">
       <Link to="/" className="flex items-center mb-6">
         <FilmIcon className="h-8 w-8 mr-2" />
-        <span className="text-2xl font-bold">JoyRide Reviews</span>
+        <span className="text-2xl font-bold">BoscovFilmes</span>
       </Link>
       
       <Card className="w-full max-w-md">
