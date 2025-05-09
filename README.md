@@ -1,48 +1,75 @@
-Bem-vindo ao projeto BoscovFilmes
+````markdown
+# BoscovFilmes
 
-Este repositório contém o código-fonte de um aplicativo web desenvolvido com Vite, TypeScript, React, shadcn-ui e Tailwind CSS.
+Bem-vindo ao projeto **BoscovFilmes**!
 
-Como editar este código?
+Este repositório contém o código-fonte de um aplicativo web desenvolvido com **Vite**, **TypeScript**, **React**, **shadcn-ui** e **Tailwind CSS**.
 
-Usando sua IDE preferida
+---
 
-Clone o repositório
-git clone <URL_DO_SEU_REPOSITÓRIO>
-cd <NOME_DO_PROJETO>
+## 🚀 Como editar este código
 
-Instale as dependências
-npm install
+### 1. Usando sua IDE preferida
 
-Inicie o servidor de desenvolvimento
-npm run dev
-Isso iniciará o projeto em modo de desenvolvimento com recarregamento automático.
+1. Clone o repositório:
+   ```bash
+   git clone https://github.com/Kitotsui/boscov-reviews.git
+   cd boscov-filmes
+````
 
-Editando diretamente no GitHub
+2. Instale as dependências:
 
-Navegue até o arquivo desejado na interface do GitHub
+   ```bash
+   npm install
+   ```
+3. Inicie o servidor de desenvolvimento:
 
-Clique no ícone de lápis para editar
+   ```bash
+   npm run dev
+   ```
 
-Faça suas alterações e valide o commit
+   Isso iniciará o projeto em modo de desenvolvimento com recarregamento automático.
 
-Usando GitHub Codespaces
+### 2. Editando diretamente no GitHub
 
-Acesse a página principal do repositório no GitHub
+1. Navegue até o arquivo desejado na interface do GitHub.
+2. Clique no ícone de lápis (✏️) para editar.
+3. Faça suas alterações e clique em **Commit changes**.
 
-Clique em Code e depois em Codespaces
+### 3. Usando GitHub Codespaces
 
-Selecione New codespace para abrir um ambiente de desenvolvimento no navegador
+1. Acesse a página principal do repositório no GitHub.
+2. Clique em **Code** e depois na aba **Codespaces**.
+3. Selecione **New codespace** para abrir um ambiente de desenvolvimento no navegador.
 
-Tecnologias utilizadas
-Vite
-TypeScript
-React
-shadcn-ui
-Tailwind CSS
+---
 
-Como implantar este projeto
+## 🛠 Tecnologias utilizadas
 
-Crie a versão de produção
-npm run build
+* Vite
+* TypeScript
+* React
+* shadcn-ui
+* Tailwind CSS
 
-Faça o deploy enviando a pasta dist (ou o diretório configurado) para o serviço de sua preferência (Netlify, Vercel, GitHub Pages, AWS S3 etc.)
+---
+
+## 📦 Como implantar este projeto
+
+1. Crie a versão de produção:
+
+   ```bash
+   npm run build
+   ```
+2. Faça o deploy enviando a pasta `dist/` (ou o diretório configurado) para o serviço de sua preferência, por exemplo:
+
+   * Netlify
+   * Vercel
+   * GitHub Pages
+   * AWS S3
+
+---
+
+## 🌐 Conectando um domínio personalizado
+
+Se o seu serviço de hospedagem permitir vincular domínios personalizados, siga a documentação do provedor para apontar seu domínio ao endpoint ou à pasta de build do projeto.
