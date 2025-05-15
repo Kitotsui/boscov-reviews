@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,10 +7,12 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FilmIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/providers/AuthProvider';
 
 const Login = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { login: authLogin, isLoggedIn } = useAuth();
   const [activeTab, setActiveTab] = useState<string>("login");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   
@@ -24,26 +26,64 @@ const Login = () => {
     email: '',
     password: '',
     confirmPassword: '',
+    birthDate: '',
   });
 
-  const handleLoginSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate('/');
+    }
+  }, [isLoggedIn, navigate]);
+
+  const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      const response = await fetch('http://localhost:3001/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: loginForm.email,
+          senha: loginForm.password,
+        })
+      });
+      setIsLoading(false);
+      if (response.status === 200) {
+        const data = await response.json();
+        authLogin(data.token);
+        toast({
+          title: "Login com sucesso",
+          description: "Bem-vindo(a) de volta!",
+        });
+        navigate('/');
+      } else {
+        const data = await response.json();
+        let errorMsg = 'Erro desconhecido';
+        if (Array.isArray(data.error)) {
+          errorMsg = data.error.map((e: any) => e.message).join(' | ');
+        } else if (typeof data.error === 'object' && data.error?.message) {
+          errorMsg = data.error.message;
+        } else if (typeof data.error === 'string') {
+          errorMsg = data.error;
+        }
+        toast({
+          title: "Erro ao entrar",
+          description: errorMsg,
+          variant: "destructive",
+        });
+      }
+    } catch (err) {
       setIsLoading(false);
       toast({
-        title: "Login com sucesso",
-        description: "Bem-vindo(a) de volta!",
+        title: "Erro ao entrar",
+        description: "Erro de conexão com o servidor",
+        variant: "destructive",
       });
-      navigate('/');
-    }, 1000);
+    }
   };
 
-  const handleRegisterSubmit = (e: React.FormEvent) => {
+  const handleRegisterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (registerForm.password !== registerForm.confirmPassword) {
       toast({
         title: "Erro de cadastro",
@@ -52,18 +92,41 @@ const Login = () => {
       });
       return;
     }
-    
     setIsLoading(true);
-    
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      const response = await fetch('http://localhost:3001/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nome: registerForm.name,
+          email: registerForm.email,
+          senha: registerForm.password,
+          dataNascimento: registerForm.birthDate,
+        })
+      });
+      setIsLoading(false);
+      if (response.status === 201) {
+        toast({
+          title: "Cadastro realizado",
+          description: "Sua conta foi criada com sucesso!",
+        });
+        setActiveTab("login");
+      } else {
+        const data = await response.json();
+        toast({
+          title: "Erro de cadastro",
+          description: data.error ? data.error : 'Erro desconhecido',
+          variant: "destructive",
+        });
+      }
+    } catch (err) {
       setIsLoading(false);
       toast({
-        title: "Cadastro realizado",
-        description: "Sua conta foi criada com sucesso!",
+        title: "Erro de cadastro",
+        description: "Erro de conexão com o servidor",
+        variant: "destructive",
       });
-      setActiveTab("login");
-    }, 1000);
+    }
   };
 
   return (
@@ -179,6 +242,17 @@ const Login = () => {
                     required
                     value={registerForm.confirmPassword}
                     onChange={(e) => setRegisterForm({...registerForm, confirmPassword: e.target.value})}
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="birth-date">Data de Nascimento</Label>
+                  <Input
+                    id="birth-date"
+                    type="date"
+                    required
+                    value={registerForm.birthDate}
+                    onChange={(e) => setRegisterForm({...registerForm, birthDate: e.target.value})}
                   />
                 </div>
               </CardContent>

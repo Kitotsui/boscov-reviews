@@ -8,8 +8,10 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Card, CardContent } from '@/components/ui/card';
 import { ArrowLeft, Clock, Calendar, User } from 'lucide-react';
+import { useAuth } from '@/providers/AuthProvider';
+import { useEffect } from 'react';
 
-// Mock data - would be fetched from API in real app
+// tenho q fazer a API pra buscar os filmes e as avaliações
 const mockMovies = [
   { id: "1", title: "Pulp Fiction", poster: "https://m.media-amazon.com/images/M/MV5BNGNhMDIzZTUtNTBlZi00MTRlLWFjM2ItYzViMjE3YzI5MjljXkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_.jpg", year: 1994, director: "Quentin Tarantino", genres: ["Crime", "Drama"], duration: "2h 34m", rating: 8.9, description: "As histórias de dois assassinos, um boxeador, um gângster e sua esposa, e um par de bandidos se entrelaçam neste conto de violência e redenção.", producer: "Miramax", classification: "18+", reviews: [
     { id: "r1", userId: "u1", userName: "Carlos Silva", rating: 5, comment: "Clássico absoluto do cinema. Diálogos brilhantes e atuações memoráveis.", date: "2023-10-15" },
@@ -30,10 +32,16 @@ const MovieDetails = () => {
   const navigate = useNavigate();
   const [userRating, setUserRating] = React.useState(0);
   const [reviewComment, setReviewComment] = React.useState('');
-  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+  const { isLoggedIn } = useAuth();
 
   // Buscar o filme com base no ID
   const movie = mockMovies.find(m => m.id === id);
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      navigate('/login');
+    }
+  }, [isLoggedIn, navigate]);
 
   const handleSubmitReview = (e: React.FormEvent) => {
     e.preventDefault();

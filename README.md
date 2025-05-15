@@ -20,7 +20,8 @@ Este repositório contém o código-fonte de um aplicativo web desenvolvido com 
    npm install
  
 3. Inicie o servidor de desenvolvimento:
-   npm run dev
+   npm run dev para o frontend
+   npm run dev:server para o backend
  
    Isso iniciará o projeto em modo de desenvolvimento com recarregamento automático.
 ---

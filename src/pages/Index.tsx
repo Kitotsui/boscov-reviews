@@ -4,6 +4,8 @@ import MovieGrid, { Movie } from '@/components/MovieGrid';
 import GenreFilter from '@/components/GenreFilter';
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from '@/components/ui/separator';
+import { useAuth } from '@/providers/AuthProvider';
+import { jwtDecode } from 'jwt-decode';
 
 
 const mockGenres = ["Ação", "Aventura", "Animação", "Comédia", "Crime", "Documentário", "Drama", "Família", "Fantasia", "História", "Terror", "Música", "Mistério", "Romance", "Ficção Científica", "Thriller", "Guerra", "Faroeste"];
@@ -92,10 +94,18 @@ const mockMovies: Movie[] = [
 ];
 
 const Index = () => {
+  const { isLoggedIn, token } = useAuth();
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('recent');
   const [filteredMovies, setFilteredMovies] = useState(mockMovies);
+  let userEmail = '';
+  if (isLoggedIn && token) {
+    try {
+      const decoded: any = jwtDecode(token);
+      userEmail = decoded.email;
+    } catch {}
+  }
 
   // Filter movies based on selected genres and search query
   React.useEffect(() => {
@@ -137,7 +147,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header onSearch={setSearchQuery} searchQuery={searchQuery} />
+      <Header onSearch={setSearchQuery} searchQuery={searchQuery} isLoggedIn={isLoggedIn} />
       
       <main className="container mx-auto max-w-7xl p-4 md:p-6 flex-grow">
         <section className="mb-8">

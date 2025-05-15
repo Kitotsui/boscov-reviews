@@ -6,6 +6,7 @@ import { z } from 'zod';
 import dotenv from 'dotenv';
 import path from 'path';
 import fs from 'fs';
+import cors from 'cors';
 
 // Carregar variáveis de ambiente
 dotenv.config();
@@ -16,6 +17,7 @@ const PORT = process.env.PORT || 3001;
 const JWT_SECRET = process.env.JWT_SECRET || 'default_secret';
 
 app.use(express.json());
+app.use(cors());
 
 // Swagger setup (swagger.json precisa ser criado)
 const swaggerPath = path.join(__dirname, '../swagger.json');
@@ -31,15 +33,26 @@ if (fs.existsSync(swaggerPath)) {
 type UsuarioInput = {
   email: string;
   senha: string;
+  nome: string;
+  dataNascimento: string;
 };
-const usuarioSchema = z.object({
+const usuarioLoginSchema = z.object({
   email: z.string().email(),
   senha: z.string().min(6),
 });
 
+const usuarioCadastroSchema = z.object({
+  email: z.string().email(),
+  senha: z.string().min(6),
+  nome: z.string().min(2),
+  dataNascimento: z.string().refine((val) => !isNaN(Date.parse(val)), {
+    message: 'Data de nascimento inválida',
+  }),
+});
+
 // Rota de login (gera JWT)
 app.post('/login', async (req: Request, res: Response) => {
-  const parse = usuarioSchema.safeParse(req.body);
+  const parse = usuarioLoginSchema.safeParse(req.body);
   if (!parse.success) {
     return res.status(400).json({ error: parse.error.errors });
   }
@@ -48,8 +61,34 @@ app.post('/login', async (req: Request, res: Response) => {
   if (!usuario || usuario.senha !== senha) {
     return res.status(401).json({ error: 'Credenciais inválidas' });
   }
-  const token = jwt.sign({ userId: usuario.id, email: usuario.email }, JWT_SECRET, { expiresIn: '1h' });
+  const token = jwt.sign({ userId: usuario.id, email: usuario.email, nome: usuario.nome }, JWT_SECRET, { expiresIn: '1h' });
   res.json({ token });
+});
+
+// Rota de cadastro de usuário
+app.post('/register', async (req: Request, res: Response) => {
+  const parse = usuarioCadastroSchema.safeParse(req.body);
+  if (!parse.success) {
+    return res.status(400).json({ error: parse.error.errors });
+  }
+  const { email, senha, nome, dataNascimento } = req.body;
+  // Verifica se já existe usuário com esse email
+  const usuarioExistente = await prisma.usuario.findUnique({ where: { email } });
+  if (usuarioExistente) {
+    return res.status(409).json({ error: 'E-mail já cadastrado' });
+  }
+  // Cria o novo usuário
+  const novoUsuario = await prisma.usuario.create({
+    data: {
+      email,
+      senha,
+      nome,
+      status: true,
+      dataNascimento: new Date(dataNascimento),
+      tipoUsuario: 'comum',
+    }
+  });
+  res.status(201).json({ usuario: novoUsuario });
 });
 
 // Middleware de autenticação JWT

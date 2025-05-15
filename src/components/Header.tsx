@@ -1,9 +1,10 @@
-
 import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { UserCircle, Search, FilmIcon } from 'lucide-react';
+import { useAuth } from '@/providers/AuthProvider';
+import { jwtDecode } from 'jwt-decode';
 
 interface HeaderProps {
   onSearch?: (query: string) => void;
@@ -14,6 +15,14 @@ interface HeaderProps {
 const Header = ({ onSearch, searchQuery = '', isLoggedIn = false }: HeaderProps) => {
   const navigate = useNavigate();
   const [query, setQuery] = React.useState(searchQuery);
+  const { logout, token } = useAuth();
+  let userName = '';
+  if (isLoggedIn && token) {
+    try {
+      const decoded: any = jwtDecode(token);
+      userName = decoded.nome || decoded.email;
+    } catch {}
+  }
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,14 +71,26 @@ const Header = ({ onSearch, searchQuery = '', isLoggedIn = false }: HeaderProps)
           </form>
           
           {isLoggedIn ? (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => navigate('/profile')}
-              className="rounded-full"
-            >
-              <UserCircle className="h-6 w-6" />
-            </Button>
+            <>
+              {userName && (
+                <span className="hidden md:inline text-sm text-muted-foreground mr-2">Bem-vindo, {userName}</span>
+              )}
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => navigate('/profile')}
+                className="rounded-full"
+              >
+                <UserCircle className="h-6 w-6" />
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => { logout(); navigate('/login'); }}
+              >
+                Sair
+              </Button>
+            </>
           ) : (
             <Button onClick={() => navigate('/login')}>Entrar</Button>
           )}
