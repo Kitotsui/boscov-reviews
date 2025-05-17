@@ -50,3 +50,12 @@ Este repositório contém o código-fonte de um aplicativo web desenvolvido com 
 
 ---
 
+.env
+DATABASE_URL="postgresql://postgres:senhaaqui@localhost:5432/nomedoschema?schema=public"
+JWT_SECRET=secret
+JWT_EXPIRES_IN=1d
+JWT_COOKIE_EXPIRES_IN=1d
+
+
+
+

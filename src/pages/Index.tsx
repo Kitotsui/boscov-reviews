@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import MovieGrid, { Movie } from '@/components/MovieGrid';
 import GenreFilter from '@/components/GenreFilter';
@@ -7,143 +7,86 @@ import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/providers/AuthProvider';
 import { jwtDecode } from 'jwt-decode';
 
+interface Genero {
+  id: number;
+  descricao: string;
+}
 
-const mockGenres = ["Ação", "Aventura", "Animação", "Comédia", "Crime", "Documentário", "Drama", "Família", "Fantasia", "História", "Terror", "Música", "Mistério", "Romance", "Ficção Científica", "Thriller", "Guerra", "Faroeste"];
-
-const mockMovies: Movie[] = [
-  {
-    id: "1",
-    title: "Pulp Fiction",
-    poster: "https://m.media-amazon.com/images/M/MV5BNGNhMDIzZTUtNTBlZi00MTRlLWFjM2ItYzViMjE3YzI5MjljXkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_.jpg",
-    year: 1994,
-    director: "Quentin Tarantino",
-    rating: 8.9,
-    genres: ["Crime", "Drama"],
-    duration: "2h 34m",
-  },
-  {
-    id: "2",
-    title: "O Poderoso Chefão",
-    poster: "https://m.media-amazon.com/images/M/MV5BM2MyNjYxNmUtYTAwNi00MTYxLWJmNWYtYzZlODY3ZTk3OTFlXkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_.jpg",
-    year: 1972,
-    director: "Francis Ford Coppola",
-    rating: 9.2,
-    genres: ["Crime", "Drama"],
-    duration: "2h 55m",
-  },
-  {
-    id: "3",
-    title: "O Cavaleiro das Trevas",
-    poster: "https://m.media-amazon.com/images/M/MV5BMTMxNTMwODM0NF5BMl5BanBnXkFtZTcwODAyMTk2Mw@@._V1_.jpg",
-    year: 2008,
-    director: "Christopher Nolan",
-    rating: 9.0,
-    genres: ["Ação", "Crime", "Drama"],
-    duration: "2h 32m",
-  },
-  {
-    id: "4",
-    title: "A Lista de Schindler",
-    poster: "https://br.web.img2.acsta.net/pictures/19/04/10/19/44/2904073.jpg",
-    year: 1993,
-    director: "Steven Spielberg",
-    rating: 9.0,
-    genres: ["Drama", "História"],
-    duration: "3h 15m",
-  },
-  {
-    id: "5",
-    title: "O Senhor dos Anéis: O Retorno do Rei",
-    poster: "https://m.media-amazon.com/images/M/MV5BNzA5ZDNlZWMtM2NhNS00NDJjLTk4NDItYTRmY2EwMWZlMTY3XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_.jpg",
-    year: 2003,
-    director: "Peter Jackson",
-    rating: 9.0,
-    genres: ["Aventura", "Drama", "Fantasia"],
-    duration: "3h 21m",
-  },
-  {
-    id: "6",
-    title: "Forrest Gump",
-    poster: "https://m.media-amazon.com/images/M/MV5BNWIwODRlZTUtY2U3ZS00Yzg1LWJhNzYtMmZiYmEyNmU1NjMzXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_.jpg",
-    year: 1994,
-    director: "Robert Zemeckis",
-    rating: 8.8,
-    genres: ["Drama", "Romance"],
-    duration: "2h 22m",
-  },
-  {
-    id: "7",
-    title: "Interestelar",
-    poster: "https://m.media-amazon.com/images/M/MV5BZjdkOTU3MDktN2IxOS00OGEyLWFmMjktY2FiMmZkNWIyODZiXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg",
-    year: 2014,
-    director: "Christopher Nolan",
-    rating: 8.6,
-    genres: ["Aventura", "Drama", "Ficção Científica"],
-    duration: "2h 49m",
-  },
-  {
-    id: "8",
-    title: "Cidade de Deus",
-    poster: "https://m.media-amazon.com/images/M/MV5BMGU5OWEwZDItNmNkMC00NzZmLTk1YTctNzVhZTJjM2NlZTVmXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg",
-    year: 2002,
-    director: "Fernando Meirelles",
-    rating: 8.6,
-    genres: ["Crime", "Drama"],
-    duration: "2h 10m",
-  },
-];
+interface Filme {
+  id: number;
+  nome: string;
+  poster: string;
+  anoLancamento: number;
+  diretor: string;
+  duracao: number;
+  generos: {
+    genero: {
+      id: number;
+      descricao: string;
+    };
+  }[];
+  avaliacoes?: { nota: number }[];
+}
 
 const Index = () => {
-  const { isLoggedIn, token } = useAuth();
-  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState('recent');
-  const [filteredMovies, setFilteredMovies] = useState(mockMovies);
-  let userEmail = '';
-  if (isLoggedIn && token) {
-    try {
-      const decoded: any = jwtDecode(token);
-      userEmail = decoded.email;
-    } catch {}
-  }
+  const [movies, setMovies] = useState<Movie[]>([]);
+  const [genres, setGenres] = useState<Genero[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { isLoggedIn } = useAuth();
 
-  // Filter movies based on selected genres and search query
-  React.useEffect(() => {
-    let result = mockMovies;
-    
-    // Filter by genre if any selected
-    if (selectedGenres.length > 0) {
-      result = result.filter(movie => 
-        movie.genres.some(genre => selectedGenres.includes(genre))
-      );
-    }
-    
-    // Filter by search query
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      result = result.filter(movie => 
-        movie.title.toLowerCase().includes(query) || 
-        movie.director.toLowerCase().includes(query)
-      );
-    }
-    
-    // Sort based on active tab
-    if (activeTab === 'top-rated') {
-      result = [...result].sort((a, b) => (b.rating || 0) - (a.rating || 0));
-    } else if (activeTab === 'recent') {
-      result = [...result].sort((a, b) => b.year - a.year);
-    }
-    
-    setFilteredMovies(result);
-  }, [selectedGenres, searchQuery, activeTab]);
+  useEffect(() => {
+    const fetchMovies = async () => {
+      try {
+        const response = await fetch('http://localhost:3001/filmes');
+        const data = await response.json();
+        setMovies(data.map((filme: Filme) => ({
+          id: filme.id.toString(),
+          title: filme.nome,
+          poster: filme.poster,
+          year: filme.anoLancamento,
+          director: filme.diretor,
+          duration: `${Math.floor(filme.duracao / 60)}h ${filme.duracao % 60}m`,
+          genres: filme.generos.map(g => g.genero.descricao),
+          avaliacoes: filme.avaliacoes?.map(av => ({ nota: av.nota }))
+        })));
+      } catch (error) {
+        console.error('Erro ao buscar filmes:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const fetchGenres = async () => {
+      try {
+        const response = await fetch('http://localhost:3001/generos');
+        const data = await response.json();
+        setGenres(data);
+      } catch (error) {
+        console.error('Erro ao buscar gêneros:', error);
+      }
+    };
+
+    fetchMovies();
+    fetchGenres();
+  }, []);
 
   const handleGenreToggle = (genre: string) => {
-    setSelectedGenres(prev => 
-      prev.includes(genre) 
-        ? prev.filter(g => g !== genre) 
+    setSelectedGenres(prev =>
+      prev.includes(genre)
+        ? prev.filter(g => g !== genre)
         : [...prev, genre]
     );
   };
+
+  const filteredMovies = movies.filter(movie => {
+    const matchesSearch = movie.title.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesGenres = selectedGenres.length === 0 || 
+      selectedGenres.some(genre => movie.genres.includes(genre));
+    return matchesSearch && matchesGenres;
+  });
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -154,7 +97,7 @@ const Index = () => {
           <h1 className="text-3xl font-bold mb-4">Descubra Filmes</h1>
           
           <GenreFilter 
-            genres={mockGenres} 
+            genres={genres?.map(g => g.descricao) || []} 
             selectedGenres={selectedGenres} 
             onGenreToggle={handleGenreToggle} 
           />
@@ -170,7 +113,7 @@ const Index = () => {
           
           <Separator className="mb-6" />
           
-          <MovieGrid movies={filteredMovies} />
+          <MovieGrid movies={filteredMovies} loading={loading} />
         </section>
       </main>
     </div>

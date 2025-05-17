@@ -102,6 +102,179 @@
           }
         }
       }
+    },
+    "/filmes": {
+      "get": {
+        "summary": "Listar todos os filmes",
+        "description": "Retorna a lista de todos os filmes cadastrados.",
+        "responses": {
+          "200": {
+            "description": "Lista de filmes retornada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Filme"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Criar novo filme",
+        "description": "Cria um novo filme no sistema.",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FilmeInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Filme criado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Filme"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/filmes/{id}": {
+      "get": {
+        "summary": "Buscar filme por ID",
+        "description": "Retorna os detalhes de um filme específico.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Filme encontrado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Filme"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Filme não encontrado"
+          }
+        }
+      },
+      "put": {
+        "summary": "Atualizar filme",
+        "description": "Atualiza os dados de um filme existente.",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FilmeInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Filme atualizado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Filme"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Filme não encontrado"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Deletar filme",
+        "description": "Remove um filme do sistema.",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Filme deletado com sucesso"
+          },
+          "404": {
+            "description": "Filme não encontrado"
+          }
+        }
+      }
+    },
+    "/filmes/genero/{generoId}": {
+      "get": {
+        "summary": "Buscar filmes por gênero",
+        "description": "Retorna a lista de filmes de um gênero específico.",
+        "parameters": [
+          {
+            "name": "generoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de filmes retornada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Filme"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -110,6 +283,55 @@
         "type": "http",
         "scheme": "bearer",
         "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "Filme": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "nome": { "type": "string" },
+          "diretor": { "type": "string" },
+          "anoLancamento": { "type": "integer" },
+          "duracao": { "type": "integer" },
+          "produtora": { "type": "string" },
+          "classificacao": { "type": "string" },
+          "poster": { "type": "string" },
+          "generos": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "genero": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "integer" },
+                    "descricao": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "FilmeInput": {
+        "type": "object",
+        "properties": {
+          "nome": { "type": "string" },
+          "diretor": { "type": "string" },
+          "anoLancamento": { "type": "integer" },
+          "duracao": { "type": "integer" },
+          "produtora": { "type": "string" },
+          "classificacao": { "type": "string" },
+          "poster": { "type": "string" },
+          "generos": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          }
+        },
+        "required": ["nome", "diretor", "anoLancamento", "duracao", "produtora", "classificacao", "poster", "generos"]
       }
     }
   }

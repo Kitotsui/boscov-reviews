@@ -1,12 +1,17 @@
-import express, { Request, Response, NextFunction } from 'express';
+import 'express-async-errors';
+import express, { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
 import swaggerUi from 'swagger-ui-express';
-import jwt from 'jsonwebtoken';
-import { z } from 'zod';
 import dotenv from 'dotenv';
 import path from 'path';
 import fs from 'fs';
 import cors from 'cors';
+import morgan from 'morgan';
+import cookieParser from 'cookie-parser';
+import filmeRoutes from './api/routes/filmeRoutes';
+import authRoutes from './api/routes/authRoutes';
+import generoRoutes from './api/routes/generoRoutes';
+import { errorHandler } from './api/middlewares/errorHandler';
 
 // Carregar variáveis de ambiente
 dotenv.config();
@@ -14,12 +19,25 @@ dotenv.config();
 const app = express();
 const prisma = new PrismaClient();
 const PORT = process.env.PORT || 3001;
-const JWT_SECRET = process.env.JWT_SECRET || 'default_secret';
 
+// Configurações de CORS
+app.use(cors({
+  origin: ['http://localhost:8080', 'http://localhost:5173'],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
+// Middlewares
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'));
+}
+
+app.use(cookieParser());
 app.use(express.json());
-app.use(cors());
+app.use(express.static(path.join(__dirname, 'public')));
 
-// Swagger setup (swagger.json precisa ser criado)
+// Swagger setup
 const swaggerPath = path.join(__dirname, '../swagger.json');
 if (fs.existsSync(swaggerPath)) {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -29,89 +47,25 @@ if (fs.existsSync(swaggerPath)) {
   console.warn('swagger.json não encontrado. Documentação Swagger não disponível.');
 }
 
-// Exemplo de validação com Zod
-type UsuarioInput = {
-  email: string;
-  senha: string;
-  nome: string;
-  dataNascimento: string;
-};
-const usuarioLoginSchema = z.object({
-  email: z.string().email(),
-  senha: z.string().min(6),
+// Rotas
+app.use('/filmes', filmeRoutes);
+app.use('/auth', authRoutes);
+app.use('/generos', generoRoutes);
+
+// Rota raiz
+app.get('/', (_req: Request, res: Response) => {
+  res.send('API Boscov Filmes');
 });
 
-const usuarioCadastroSchema = z.object({
-  email: z.string().email(),
-  senha: z.string().min(6),
-  nome: z.string().min(2),
-  dataNascimento: z.string().refine((val) => !isNaN(Date.parse(val)), {
-    message: 'Data de nascimento inválida',
-  }),
+// Rota 404
+app.use('*', (_req: Request, res: Response) => {
+  res.status(404).json({ error: 'Rota não encontrada!' });
 });
 
-// Rota de login (gera JWT)
-app.post('/login', async (req: Request, res: Response) => {
-  const parse = usuarioLoginSchema.safeParse(req.body);
-  if (!parse.success) {
-    return res.status(400).json({ error: parse.error.errors });
-  }
-  const { email, senha } = req.body as UsuarioInput;
-  const usuario = await prisma.usuario.findUnique({ where: { email } });
-  if (!usuario || usuario.senha !== senha) {
-    return res.status(401).json({ error: 'Credenciais inválidas' });
-  }
-  const token = jwt.sign({ userId: usuario.id, email: usuario.email, nome: usuario.nome }, JWT_SECRET, { expiresIn: '1h' });
-  res.json({ token });
-});
+// Middleware de erro
+app.use(errorHandler);
 
-// Rota de cadastro de usuário
-app.post('/register', async (req: Request, res: Response) => {
-  const parse = usuarioCadastroSchema.safeParse(req.body);
-  if (!parse.success) {
-    return res.status(400).json({ error: parse.error.errors });
-  }
-  const { email, senha, nome, dataNascimento } = req.body;
-  // Verifica se já existe usuário com esse email
-  const usuarioExistente = await prisma.usuario.findUnique({ where: { email } });
-  if (usuarioExistente) {
-    return res.status(409).json({ error: 'E-mail já cadastrado' });
-  }
-  // Cria o novo usuário
-  const novoUsuario = await prisma.usuario.create({
-    data: {
-      email,
-      senha,
-      nome,
-      status: true,
-      dataNascimento: new Date(dataNascimento),
-      tipoUsuario: 'comum',
-    }
-  });
-  res.status(201).json({ usuario: novoUsuario });
-});
-
-// Middleware de autenticação JWT
-function autenticarJWT(req: Request & { user?: any }, res: Response, next: NextFunction) {
-  const authHeader = req.headers.authorization;
-  if (!authHeader) return res.status(401).json({ error: 'Token não fornecido' });
-  const token = authHeader.split(' ')[1];
-  try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    req.user = decoded;
-    next();
-  } catch (err) {
-    return res.status(403).json({ error: 'Token inválido' });
-  }
-}
-
-// Rota protegida de exemplo
-app.get('/me', autenticarJWT, async (req: Request & { user?: any }, res: Response) => {
-  const usuario = await prisma.usuario.findUnique({ where: { id: req.user.userId } });
-  if (!usuario) return res.status(404).json({ error: 'Usuário não encontrado' });
-  res.json({ usuario });
-});
-
+// Iniciar servidor
 app.listen(PORT, () => {
   console.log(`Servidor rodando em http://localhost:${PORT}`);
   console.log(`Swagger disponível em http://localhost:${PORT}/api-docs`);

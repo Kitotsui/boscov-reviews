@@ -39,8 +39,8 @@ const Header = ({ onSearch, searchQuery = '', isLoggedIn = false }: HeaderProps)
           </Link>
           
           <nav className="hidden md:flex items-center space-x-4">
-            <Link to="/" className="text-sm font-medium hover:text-primary">
-              Início
+            <Link to="/filmes" className="text-sm font-medium hover:text-primary">
+              Filmes
             </Link>
             <Link to="/top-rated" className="text-sm font-medium hover:text-primary">
               Mais Avaliados

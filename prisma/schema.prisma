@@ -36,6 +36,7 @@ model Filme {
   produtora      String
   classificacao  String
   poster         String
+  sinopse        String
   generos        GeneroFilme[]
   avaliacoes     Avaliacao[]
 }
@@ -55,11 +56,18 @@ model GeneroFilme {
 }
 
 model Avaliacao {
-  id         Int      @id @default(autoincrement())
-  usuario    Usuario  @relation(fields: [usuarioId], references: [id])
-  usuarioId  Int
-  filme      Filme    @relation(fields: [filmeId], references: [id])
-  filmeId    Int
-  nota       Int
-  comentario String?
+  id        Int      @id @default(autoincrement())
+  nota      Int
+  comentario String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  usuario   Usuario @relation(fields: [usuarioId], references: [id])
+  usuarioId Int
+
+  filme   Filme @relation(fields: [filmeId], references: [id])
+  filmeId Int
+
+  @@index([filmeId])
+  @@index([usuarioId])
 }

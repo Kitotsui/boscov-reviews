@@ -29,6 +29,8 @@ const Login = () => {
     birthDate: '',
   });
 
+  const [registerErrors, setRegisterErrors] = useState<{[key: string]: string}>({});
+
   useEffect(() => {
     if (isLoggedIn) {
       navigate('/');
@@ -39,7 +41,7 @@ const Login = () => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const response = await fetch('http://localhost:3001/login', {
+      const response = await fetch('http://localhost:3001/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -82,19 +84,36 @@ const Login = () => {
     }
   };
 
+  function validateRegisterForm() {
+    const errors: {[key: string]: string} = {};
+    if (!registerForm.name || registerForm.name.trim().length < 2) {
+      errors.name = 'O nome deve ter pelo menos 2 caracteres';
+    }
+    if (!registerForm.email || !/^\S+@\S+\.\S+$/.test(registerForm.email)) {
+      errors.email = 'E-mail inválido';
+    }
+    if (!registerForm.password || registerForm.password.length < 6) {
+      errors.password = 'A senha deve ter pelo menos 6 caracteres';
+    }
+    if (registerForm.password !== registerForm.confirmPassword) {
+      errors.confirmPassword = 'As senhas não coincidem';
+    }
+    if (!registerForm.birthDate || isNaN(Date.parse(registerForm.birthDate))) {
+      errors.birthDate = 'Data de nascimento inválida';
+    }
+    return errors;
+  }
+
   const handleRegisterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (registerForm.password !== registerForm.confirmPassword) {
-      toast({
-        title: "Erro de cadastro",
-        description: "As senhas não coincidem",
-        variant: "destructive",
-      });
+    const errors = validateRegisterForm();
+    setRegisterErrors(errors);
+    if (Object.keys(errors).length > 0) {
       return;
     }
     setIsLoading(true);
     try {
-      const response = await fetch('http://localhost:3001/register', {
+      const response = await fetch('http://localhost:3001/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -209,6 +228,7 @@ const Login = () => {
                     value={registerForm.name}
                     onChange={(e) => setRegisterForm({...registerForm, name: e.target.value})}
                   />
+                  {registerErrors.name && <span className="text-red-500 text-xs">{registerErrors.name}</span>}
                 </div>
                 
                 <div className="space-y-2">
@@ -221,6 +241,7 @@ const Login = () => {
                     value={registerForm.email}
                     onChange={(e) => setRegisterForm({...registerForm, email: e.target.value})}
                   />
+                  {registerErrors.email && <span className="text-red-500 text-xs">{registerErrors.email}</span>}
                 </div>
                 
                 <div className="space-y-2">
@@ -232,6 +253,7 @@ const Login = () => {
                     value={registerForm.password}
                     onChange={(e) => setRegisterForm({...registerForm, password: e.target.value})}
                   />
+                  {registerErrors.password && <span className="text-red-500 text-xs">{registerErrors.password}</span>}
                 </div>
                 
                 <div className="space-y-2">
@@ -243,6 +265,7 @@ const Login = () => {
                     value={registerForm.confirmPassword}
                     onChange={(e) => setRegisterForm({...registerForm, confirmPassword: e.target.value})}
                   />
+                  {registerErrors.confirmPassword && <span className="text-red-500 text-xs">{registerErrors.confirmPassword}</span>}
                 </div>
                 
                 <div className="space-y-2">
@@ -254,6 +277,7 @@ const Login = () => {
                     value={registerForm.birthDate}
                     onChange={(e) => setRegisterForm({...registerForm, birthDate: e.target.value})}
                   />
+                  {registerErrors.birthDate && <span className="text-red-500 text-xs">{registerErrors.birthDate}</span>}
                 </div>
               </CardContent>
               
