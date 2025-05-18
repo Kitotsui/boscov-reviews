@@ -24,7 +24,7 @@ Este repositório contém o código-fonte de um aplicativo web desenvolvido com 
 
    Caso o banco não esteja populado ainda, executar:
    
-   !ATENÇÃO, CASO O COMANDO A SEGUIR IRÁ LIMPAR O BANCO!
+   !ATENÇÃO, O COMANDO A SEGUIR IRÁ LIMPAR O BANCO!
    
    npx prisma db seed
 
