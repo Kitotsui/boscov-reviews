@@ -20,6 +20,7 @@ Este repositório contém o código-fonte de um aplicativo web desenvolvido com 
 4. Crie o arquivo .env na raiz do projeto.
 
 5. Se houver alguma alteração no schema do Prisma, executar:
+   
    npx prisma migrate dev
 
    Caso o banco não esteja populado ainda, executar:
