@@ -23,10 +23,12 @@ Este repositório contém o código-fonte de um aplicativo web desenvolvido com 
    npx prisma migrate dev
 
    Caso o banco não esteja populado ainda, executar:
+   
    !ATENÇÃO, CASO O COMANDO A SEGUIR IRÁ LIMPAR O BANCO!
+   
    npx prisma db seed
 
-6. Inicie o servidor de desenvolvimento:
+7. Inicie o servidor de desenvolvimento:
    npm run dev para o frontend
    npm run dev:server para o backend
 
