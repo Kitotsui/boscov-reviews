@@ -11,6 +11,9 @@
     "dev:server": "ts-node src/server.ts",
     "seed": "ts-node prisma/seed.ts"
   },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
     "@radix-ui/react-accordion": "^1.2.0",
@@ -87,7 +90,7 @@
     "globals": "^15.9.0",
     "jsonwebtoken": "^9.0.2",
     "postcss": "^8.4.35",
-    "prisma": "^6.7.0",
+    "prisma": "^6.8.2",
     "swagger-ui-express": "^5.0.1",
     "tailwindcss": "^3.4.1",
     "ts-node": "^10.9.2",
