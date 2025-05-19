@@ -22,15 +22,7 @@ Este repositório contém o código-fonte de um aplicativo web desenvolvido com 
 
 6. Crie o arquivo .env na raiz do projeto.
 
-7. Se houver alguma alteração no schema do Prisma, executar:
-   
-   npx prisma migrate dev
-
-   Caso o banco não esteja populado ainda, executar:
-   
-   !ATENÇÃO, O COMANDO A SEGUIR IRÁ LIMPAR O BANCO!
-   
-   npx prisma db seed
+7. npx prisma generate
 
 8. Inicie o servidor de desenvolvimento:
 
